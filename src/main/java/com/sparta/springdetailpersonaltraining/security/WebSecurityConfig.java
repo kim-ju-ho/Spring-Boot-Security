@@ -41,12 +41,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 // image 폴더를 login 없이 허용
                 .antMatchers("/images/**").permitAll()
 // css 폴더를 login 없이 허용
-                .antMatchers("/css/**").permitAll()
-                .antMatchers("/js/**").permitAll()
-                .antMatchers("/user/**").permitAll()
-                .antMatchers("/").permitAll()
+//                .antMatchers("/css/**").permitAll()
+//                .antMatchers("/js/**").permitAll()
+//                .antMatchers("/user/**").permitAll()
+//                .antMatchers("/**").permitAll()
         // 그 외 어떤 요청이든 '인증'
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
 // [로그인 기능]
                 .formLogin()
