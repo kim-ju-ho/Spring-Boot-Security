@@ -2,12 +2,16 @@ package com.sparta.springdetailpersonaltraining.controller;
 
 
 
+import com.sparta.springdetailpersonaltraining.models.Comment;
 import com.sparta.springdetailpersonaltraining.models.Contents;
 import com.sparta.springdetailpersonaltraining.models.ContentsRequestDto;
+import com.sparta.springdetailpersonaltraining.repository.CommentRepository;
 import com.sparta.springdetailpersonaltraining.repository.ContentsRepository;
 import com.sparta.springdetailpersonaltraining.service.ContentsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -17,6 +21,7 @@ public class ContentsRestController {
 
     private final ContentsRepository ContentsRepository;
     private final ContentsService ContentsService;
+    private final CommentRepository commentRepository;
 
     // 게시글 전체 조회
     @GetMapping("/api/contents")
@@ -25,12 +30,17 @@ public class ContentsRestController {
         return ContentsRepository.findAllByOrderByCreatedAtDesc();
     }
 
-    // 게시글 특정 조회
+    // 게시글 특정 조회 및 코멘트 조회
     @GetMapping("/api/contents/{id}")
-    public Contents getContents(@PathVariable Long id) {
+    public ModelAndView getContents(ModelAndView mv, @PathVariable Long id) {
+
         Contents contents =  ContentsRepository.findById(id).orElseThrow(
                 ()->new IllegalArgumentException("contentsId가 존재하지 않습니다."));
-        return contents;
+        List<Comment> commentList  = commentRepository.findAllByParentsIdOrderByCreatedAtDesc(id);
+        mv.addObject("contents",contents);
+        mv.addObject("commentList", commentList);
+        mv.setViewName("detail");
+        return mv;
     }
 
     // 게시글 생성
@@ -43,6 +53,7 @@ public class ContentsRestController {
     // 게시글 수정
     @PutMapping("/api/contents/{id}")
     public Long updateContents(@PathVariable Long id, @RequestBody ContentsRequestDto requestDto) {
+
         ContentsService.update(id, requestDto);
         return id;
     }

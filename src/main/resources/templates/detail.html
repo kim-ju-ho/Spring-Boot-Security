@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+
 
 <head>
     <meta charset="UTF-8">
@@ -9,58 +11,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-    <!--    font-family: 'Jua', sans-serif;-->
-
-    <script>
-        $(document).ready(function () {
-            getMessages();
-        })
-
-        // 게시글을 불러옵니다.
-        function getMessages() {
-            $('#cards-box').empty();
-            let idx = location.href.split("id=")[1]; //localhost/detail.html?id=12
-            $.ajax({
-                type: "GET",
-                url: `/api/contents/${idx}`,
-                data: {},
-                success: function (response) {
-                    let post = response;
-                    let id = post.id;
-                    let name = post.name;
-                    let title = post.title;
-                    let contents = post.contents;
-                    let modifiedAt = post.modifiedAt;
-                    addHTML(id, name, title, contents, modifiedAt);
-                }
-            });
-        }
-
-        // 불러온 게시글을 html에 붙여줍니다.
-        function addHTML(id, name, title, contents, modifiedAt) {
-            let tempHtml = makeMessage(id, name, title, contents, modifiedAt);
-            $('#cards-box').append(tempHtml);
-        }
-
-        // 게시글 형태를 만들어줍니다.
-        function makeMessage(id, name, title, contents, modifiedAt) {
-            return `<div class="card">
-                        <div class="metadata">
-                           <div id="${id}-name" class="name">
-                               ${name}
-                           </div>
-                           <div class="date">
-                               ${modifiedAt}
-                           </div>
-                        </div>
-                    <h2 class='title' id="${id}-title">"${title}"</h2>
-                        <div class="contents" id="${id}-contents" >
-                           ${contents}
-                        </div>
-                    </div>`;
-        }
+    <script th:inline="javascript">
+        let msgTitle = [[${contents.title}]];
+        let msgName = [[${contents.name}]];
 
     </script>
+    <script   type="text/javascript" th:src="@{/js/detail.js}"></script>
+    <!--    font-family: 'Jua', sans-serif;-->
+
+
 
     <style>
         @import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css);
@@ -192,6 +151,7 @@
 
         .contents div.edit {
             display: none;
+
         }
 
         #cards-box {
@@ -215,13 +175,23 @@
             font-size: 30px;
             position: absolute;
         }
+        .contents img{
+            float: right;
+            margin-left: 5px;
+            margin-bottom: 3px;
+            cursor: pointer;
+        }
+        #sendBtn{
+            display: none;
+        }
     </style>
 
 </head>
 
 <body>
 <div class="background-header">
-
+    <a href="/user/login" id="login">로그인</a>
+    <a href="/user/logout" id="signup">로그아웃</a>
 </div>
 <div class="background-body">
 
@@ -237,25 +207,70 @@
         <div class="card">
             <!-- date/name 영역 -->
             <div class="metadata">
-                <div class="date">
-                    October 10, 2020
+                <div class="date" th:text="${contents.createdAt}">
+
                 </div>
-                <div class="name">
-                    anonymous
+                <div class="name" th:text="${contents.name}">
+
                 </div>
             </div>
             <!-- contents 조회영역-->
-            <h2>asd</h2>
+            <h2 th:text="${contents.title}"></h2>
             <div class="contents">
-                <div id="1-contents" class="text">
-                    dsafnkalfklewakflekelafkleajfkleafkldsankflenwaklfnekwlafneklwanfkelawnfkelanfkleanfklew
+                <div id="1-contents" class="text" th:text="${contents.contents}">
                 </div>
                 <div id="1-editarea" class="edit">
-                    <!--  <textarea id="1-textarea" class="te-edit" name="" id="" cols="30" rows="5"></textarea>-->
+                    <textarea id="1-textarea" class="te-edit" name="1-textarea" cols="30" rows="5">
+                    </textarea>
+                    <img  src="/images/send.png" id="sendBtn" alt="send" onclick = "updateMessage()">
+
                 </div>
+                <img src="/images/edit.png"  id="editBtn" alt="edit">
+                <img src="/images/delete.png" id="deleteBtn" alt="delete" onclick="deleteMessage()">
             </div>
         </div>
     </div>
+
+    <!--comment 작성 -->
+    <div id="comment-box" class="area-read">
+        <h2>comment</h2>
+        <div class="card">
+            <div class="metadata">
+            <!-- contents 조회영역-->
+                <div class="name" id="commentName" >이름이 들어갈자리</div>
+            </div>
+            <div class="contents">
+                <div id="createCommentArea" class="">
+                    <textarea id="createComment"  name="1-textarea" cols="40" rows="5"></textarea>
+                   <img  src="/images/send.png" id="sendBtn-1" alt="send" onclick = "createComt()">
+                </div>
+            </div>
+        </div>
+
+        <!--comment list-->
+        <hr>
+        <br>
+
+            <div class="card" th:each="comment :${commentList}">
+                <!-- date/name 영역 -->
+                <div class="metadata">
+                    <div class="date"  th:text="${comment.createdAt}"></div>
+                    <div class="name" th:id="|${comment.id +'-'+'commentName'}|" th:text="${comment.name}"></div>
+                </div>
+                <!-- comment 조회영역-->
+                <div class="contents">
+                    <div th:id="|${comment.id +'-'+'comment'}|" class="text" th:text="${comment.comment}"></div>
+                    <div th:id="|${comment.id +'-'+'commentArea'}|" class="edit">
+                        <textarea  th:id="|${comment.id +'-'+'commentEdit'}|" th:text="${comment.comment}" class="te-edit" name="1-textarea" cols="30" rows="5"></textarea>
+                        <img  src="/images/send.png" th:id="|${comment.id +'-'+'sendBtn'}|" alt="send" th:onclick="'updateComment('+${comment.id}+')'" >
+                    </div>
+                    <img src="/images/edit.png"  th:id="|${comment.id +'-'+'editBtn'}|" alt="edit" th:onclick="'switchBtn('+${comment.id}+')'">
+                    <img src="/images/delete.png" th:id="|${comment.id +'-'+'deleteBtn'}|" alt="delete" th:onclick="'deleteComment('+${comment.id}+')'">
+                </div>
+            </div>
+    </div>
+
+
 </div>
 </body>
 </html>
