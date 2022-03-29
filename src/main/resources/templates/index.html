@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -42,7 +42,7 @@
         }
 
         function makeMessage(id, name, title, contents, modifiedAt) {
-            return `<a href="../static/detail.html?id=id">
+            return `<a href="/api/contents/${id}">
                         <div class="card">
                             <div class="metadata">
                                <div ${id}="${id}-name" class="name">
@@ -214,9 +214,11 @@
 
 <body>
 <div class="background-header">
+    <a href="/user/login" id="login">로그인</a>
+    <a href="/user/logout" id="signup">로그아웃</a>
 </div>
 <div class="background-body">
-
+    <p>asdasdasd</p>
 </div>
 <div class="wrap">
     <div class="header">

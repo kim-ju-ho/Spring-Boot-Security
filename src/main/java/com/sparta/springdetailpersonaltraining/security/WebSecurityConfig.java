@@ -3,6 +3,7 @@ package com.sparta.springdetailpersonaltraining.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -18,6 +19,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final AuthSuccessHandler authSuccessHandler;
     private final AuthFailureHandler authFailureHandler;
+    private final AuthLogoutSuccessHandler authLogoutSuccessHandler;
 
     @Bean
     public BCryptPasswordEncoder encodePassword() {
@@ -41,12 +43,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 // image 폴더를 login 없이 허용
                 .antMatchers("/images/**").permitAll()
 // css 폴더를 login 없이 허용
-//                .antMatchers("/css/**").permitAll()
-//                .antMatchers("/js/**").permitAll()
-//                .antMatchers("/user/**").permitAll()
-//                .antMatchers("/**").permitAll()
+                .antMatchers("/css/**").permitAll()
+                .antMatchers("/js/**").permitAll()
+                .antMatchers("/user/**").permitAll()
+                .antMatchers("/detail/**").permitAll()
+                .antMatchers("/").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/contents/**").permitAll()
         // 그 외 어떤 요청이든 '인증'
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
                 .and()
 // [로그인 기능]
                 .formLogin()
@@ -61,8 +65,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .logout()
-// 로그아웃 요청 처리 URL
                 .logoutUrl("/user/logout")
+                .logoutSuccessUrl("/")
                 .permitAll()
                 .and()
                 .exceptionHandling()
