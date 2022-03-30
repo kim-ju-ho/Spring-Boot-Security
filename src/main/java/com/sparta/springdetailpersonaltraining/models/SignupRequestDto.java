@@ -2,6 +2,7 @@ package com.sparta.springdetailpersonaltraining.models;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -10,7 +11,7 @@ import javax.validation.constraints.Size;
 
 @Setter
 @Getter
-
+@Validated
 public class SignupRequestDto {
 
 

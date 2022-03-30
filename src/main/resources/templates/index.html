@@ -214,11 +214,12 @@
 
 <body>
 <div class="background-header">
-    <a href="/user/login" id="login">로그인</a>
-    <a href="/user/logout" id="signup">로그아웃</a>
+    <a href="/user/login" id="login" th:if="${username == null}" >로그인</a>
+    <a href="/user/logout" id="signup" th:if="${username != null}">로그아웃</a>
+    <p th:if="${username != null}" th:text="|${username+'님 환영합니다.'}|"></p>
 </div>
 <div class="background-body">
-    <p>asdasdasd</p>
+
 </div>
 <div class="wrap">
     <div class="header">
@@ -226,7 +227,7 @@
             맘껏 외치세요 무야호!</h2>
     </div>
     <div class="to-write">
-        <button type="button" class="btn btn-primary" onclick="location.href='write.html'"><b>글 쓰 기</b></button>
+        <button type="button" class="btn btn-primary" onclick="location.href='/api/write'"><b>글 쓰 기</b></button>
     </div>
     <div id="cards-box" class="area-read">
         <div class="card">
