@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class HomeController {
 
     @GetMapping("/")
-    public String home(Model model,  UserDetailsImpl userDetails){
-        if ( userDetails.getAuthorities() == null) {
-            model.addAttribute("username", userDetails.getUser().getUsername());
+    public String home(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        if ( userDetails == null) {
+            return "index";
         }
+        model.addAttribute("username", userDetails.getUsername());
         return "index";
 
 

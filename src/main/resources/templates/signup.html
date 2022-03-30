@@ -23,7 +23,7 @@
         <input type="text" id="username" name="username" placeholder="Username" class="login-input-box">
 
         <p id="usernameChk" style="color: red;display: none">중복된 아이디 입니다.</p>
-
+        <p th:if="${validStr != null}" th:text="|${validStr}|"></p>
         <div class="login-id-label">Password</div>
         <input type="password" id="password" name="password" class="login-input-box">
 
