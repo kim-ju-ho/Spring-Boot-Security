@@ -25,7 +25,6 @@ public class AuthFailureHandler extends SimpleUrlAuthenticationFailureHandler {
         }else if(exception instanceof BadCredentialsException){
             msg ="BadCredentialsException account";
         }
-        System.out.println(exception);
 
         setDefaultFailureUrl("/user/login?error");
         super.onAuthenticationFailure(request, response, exception);
